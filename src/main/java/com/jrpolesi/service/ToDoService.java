@@ -6,6 +6,7 @@ import com.jrpolesi.model.ToDo;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 public class ToDoService {
     private final IToDoRepository toDoRepository;
@@ -26,6 +27,12 @@ public class ToDoService {
         return toDoRepository.findAll().stream()
                 .map(this::toResponseDTO)
                 .toList();
+    }
+
+    public ToDoResponseDTO findOneById(String id) {
+        final var todo = toDoRepository.findOneById(java.util.UUID.fromString(id));
+
+        return Objects.isNull(todo) ? null : toResponseDTO(todo);
     }
 
     public ToDoResponseDTO toResponseDTO(ToDo todo) {

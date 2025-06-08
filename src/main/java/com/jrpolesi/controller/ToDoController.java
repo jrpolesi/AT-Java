@@ -1,6 +1,7 @@
 package com.jrpolesi.controller;
 
 import com.jrpolesi.dto.ToDoRequestDTO;
+import com.jrpolesi.dto.ToDoResponseDTO;
 import com.jrpolesi.service.ToDoService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -22,6 +23,7 @@ public class ToDoController implements IController {
     public void initRoutes() {
         app.post("/todo", this::createToDo);
         app.get("/todo", this::findAllToDos);
+        app.get("/todo/{id}", this::findOneById);
     }
 
     private void createToDo(Context ctx) {
@@ -53,6 +55,27 @@ public class ToDoController implements IController {
     public void findAllToDos(Context ctx) {
         final var toDoList = toDoService.findAllToDos();
         ctx.json(toDoList);
+    }
+
+    public void findOneById(Context ctx) {
+        final var id = ctx.pathParam("id");
+        ToDoResponseDTO toDo = null;
+
+        try {
+            toDo = toDoService.findOneById(id);
+        } catch (IllegalArgumentException e) {
+            ctx.status(HttpStatus.BAD_REQUEST);
+            ctx.json(Map.of("erro", "Id inválido"));
+            return;
+        }
+
+        if (toDo == null) {
+            ctx.status(HttpStatus.NOT_FOUND);
+            ctx.json(Map.of("erro", "To Do não encontrado"));
+            return;
+        }
+
+        ctx.json(toDo);
     }
 
     private String validateToDoRequest(ToDoRequestDTO toDoRequest) {

@@ -7,4 +7,5 @@ import java.util.List;
 public interface IToDoRepository {
     void save(ToDo toDo);
     List<ToDo> findAll();
+    ToDo findOneById(java.util.UUID id);
 }
