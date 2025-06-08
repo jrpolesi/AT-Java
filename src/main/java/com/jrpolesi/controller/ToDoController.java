@@ -21,6 +21,7 @@ public class ToDoController implements IController {
     @Override
     public void initRoutes() {
         app.post("/todo", this::createToDo);
+        app.get("/todo", this::findAllToDos);
     }
 
     private void createToDo(Context ctx) {
@@ -47,6 +48,11 @@ public class ToDoController implements IController {
 
         ctx.status(HttpStatus.CREATED);
         ctx.json(createdToDo);
+    }
+
+    public void findAllToDos(Context ctx) {
+        final var toDoList = toDoService.findAllToDos();
+        ctx.json(toDoList);
     }
 
     private String validateToDoRequest(ToDoRequestDTO toDoRequest) {

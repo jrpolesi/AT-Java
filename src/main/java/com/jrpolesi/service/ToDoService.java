@@ -5,6 +5,7 @@ import com.jrpolesi.dto.ToDoResponseDTO;
 import com.jrpolesi.model.ToDo;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class ToDoService {
     private final IToDoRepository toDoRepository;
@@ -18,6 +19,16 @@ public class ToDoService {
 
         toDoRepository.save(todo);
 
+        return toResponseDTO(todo);
+    }
+
+    public List<ToDoResponseDTO> findAllToDos() {
+        return toDoRepository.findAll().stream()
+                .map(this::toResponseDTO)
+                .toList();
+    }
+
+    public ToDoResponseDTO toResponseDTO(ToDo todo) {
         return new ToDoResponseDTO(
                 todo.getId().toString(),
                 todo.getTitle(),

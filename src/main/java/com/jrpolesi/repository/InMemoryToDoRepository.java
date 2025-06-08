@@ -13,4 +13,9 @@ public class InMemoryToDoRepository implements IToDoRepository {
     public void save(ToDo toDo) {
         toDoList.add(toDo);
     }
+
+    @Override
+    public List<ToDo> findAll() {
+        return toDoList;
+    }
 }
