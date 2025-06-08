@@ -31,12 +31,7 @@ class InMemoryToDoRepositoryTest {
         final var savedToDo = repository.save(toDo);
 
         // then
-        assertNotNull(savedToDo);
-        assertEquals(toDo.getId(), savedToDo.getId());
-        assertEquals(toDo.getTitle(), savedToDo.getTitle());
-        assertEquals(toDo.getDescription(), savedToDo.getDescription());
-        assertEquals(toDo.isCompleted(), savedToDo.isCompleted());
-        assertEquals(toDo.getCreatedAt(), savedToDo.getCreatedAt());
+        assertToDo(toDo, savedToDo);
     }
 
     @Test
@@ -47,8 +42,9 @@ class InMemoryToDoRepositoryTest {
         // then
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertTrue(result.contains(DEFAULT_TODOS.get(0)));
-        assertTrue(result.contains(DEFAULT_TODOS.get(1)));
+
+        assertToDo(DEFAULT_TODOS.get(0), result.get(0));
+        assertToDo(DEFAULT_TODOS.get(1), result.get(1));
     }
 
     @Test
@@ -57,8 +53,7 @@ class InMemoryToDoRepositoryTest {
         var result = repository.findOneById(DEFAULT_TODOS.get(0).getId());
 
         // then
-        assertNotNull(result);
-        assertEquals(DEFAULT_TODOS.get(0), result);
+        assertToDo(DEFAULT_TODOS.get(0), result);
     }
 
     @Test
@@ -71,5 +66,14 @@ class InMemoryToDoRepositoryTest {
 
         // then
         assertNull(result);
+    }
+
+    private void assertToDo(ToDo expected, ToDo actual) {
+        assertNotNull(actual);
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.isCompleted(), actual.isCompleted());
+        assertEquals(expected.getCreatedAt(), actual.getCreatedAt());
     }
 } 

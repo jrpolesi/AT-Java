@@ -39,7 +39,11 @@ class ToDoServiceTest {
         assertEquals(request.concluido(), response.concluido());
         assertNotNull(response.id());
         assertNotNull(response.dataCriacao());
-        verify(toDoRepository, times(1)).save(any(ToDo.class));
+        verify(toDoRepository, times(1)).save(eq(ToDo.with(
+                request.titulo(),
+                request.descricao(),
+                request.concluido()
+        )));
     }
 
     @Test
@@ -75,7 +79,7 @@ class ToDoServiceTest {
         // then
         assertToDo(todo, response);
 
-        verify(toDoRepository).findOneById(uuid);
+        verify(toDoRepository, times(1)).findOneById(uuid);
     }
 
     @Test
@@ -89,7 +93,7 @@ class ToDoServiceTest {
 
         // then
         assertNull(response);
-        verify(toDoRepository).findOneById(uuid);
+        verify(toDoRepository, times(1)).findOneById(uuid);
     }
 
     @Test
