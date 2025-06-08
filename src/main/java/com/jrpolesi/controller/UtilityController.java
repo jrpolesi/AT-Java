@@ -18,6 +18,8 @@ public class UtilityController implements IController {
     public void initRoutes() {
         app.get("/hello", this::helloWorld);
         app.get("/status", this::getStatus);
+
+        app.post("/echo", this::echo);
     }
 
     private void helloWorld(Context ctx) {
@@ -31,5 +33,19 @@ public class UtilityController implements IController {
                 "status", "ok",
                 "timestamp", timestamp
         ));
+    }
+
+    private void echo(Context ctx) {
+        final var body = ctx.bodyAsClass(Map.class);
+        final var message = body.get("mensagem");
+
+        if (message == null) {
+            ctx.status(400).json(
+                    Map.of("erro", "A propriedade 'mensagem' é obrigatória.")
+            );
+            return;
+        }
+
+        ctx.json(body);
     }
 }
