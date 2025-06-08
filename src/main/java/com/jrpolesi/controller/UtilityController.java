@@ -1,5 +1,9 @@
 package com.jrpolesi.controller;
 
+import com.jrpolesi.config.ProjectJavalinConfig;
+import com.jrpolesi.dto.ToDoRequestDTO;
+import com.jrpolesi.dto.ToDoResponseDTO;
+import com.jrpolesi.utils.HttpClient.HttpClient;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
@@ -20,6 +24,7 @@ public class UtilityController implements IController {
         app.get("/hello", this::helloWorld);
         app.get("/saudacao/{nome}", this::greeting);
         app.get("/status", this::getStatus);
+        app.get("/exercicio3", this::exercicio3);
 
         app.post("/echo", this::echo);
     }
@@ -56,5 +61,24 @@ public class UtilityController implements IController {
         final var message = String.format("Olá, %s!", nome);
 
         ctx.json(Map.of("mensagem", message));
+    }
+
+    private void exercicio3(Context ctx) {
+        System.out.println("Executando o exercício 3...");
+        final var baseURL = String.format("http://localhost:%d/todo", ProjectJavalinConfig.PORT);
+
+        var todoRequest = new ToDoRequestDTO("Teste", "Teste para o exercício 3", true);
+        try {
+            final var response = HttpClient.post(baseURL, todoRequest, ToDoResponseDTO.class);
+            System.out.println("Parte 1 - Item criado: " + response.getBody());
+
+            ctx.json(Map.of(
+                    "mensagem", "Exercício 3 executado com sucesso, verifique os logs no console"
+            ));
+        } catch (Exception e) {
+            ctx.status(HttpStatus.INTERNAL_SERVER_ERROR).json(
+                    Map.of("erro", "Erro ao executar o exercício 3: " + e.getMessage())
+            );
+        }
     }
 }
