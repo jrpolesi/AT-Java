@@ -64,13 +64,18 @@ public class UtilityController implements IController {
     }
 
     private void exercicio3(Context ctx) {
-        System.out.println("Executando o exercício 3...");
+        System.out.println("Executando o exercício 3...\n");
         final var baseURL = String.format("http://localhost:%d/todo", ProjectJavalinConfig.PORT);
 
-        var todoRequest = new ToDoRequestDTO("Teste", "Teste para o exercício 3", true);
+
         try {
-            final var response = HttpClient.post(baseURL, todoRequest, ToDoResponseDTO.class);
-            System.out.println("Parte 1 - Item criado: " + response.getBody());
+            // Parte 1 do exercício 3
+            final var createdId = stepOneOfExercise3(baseURL);
+            System.out.println("\n");
+
+            // Parte 2 do exercício 3
+            stepTwoOfExercise3(baseURL);
+            System.out.println("\n");
 
             ctx.json(Map.of(
                     "mensagem", "Exercício 3 executado com sucesso, verifique os logs no console"
@@ -80,5 +85,39 @@ public class UtilityController implements IController {
                     Map.of("erro", "Erro ao executar o exercício 3: " + e.getMessage())
             );
         }
+    }
+
+    private String stepOneOfExercise3(String baseURL) throws Exception {
+        var todoRequest = new ToDoRequestDTO("Teste", "Teste para o exercício 3", true);
+
+        final var response = HttpClient.post(baseURL, todoRequest, ToDoResponseDTO.class);
+        final var body = response.getBody();
+        System.out.println("Parte 1 - Item criado: ");
+        printToDoResponse(body);
+
+        return body.id();
+    }
+
+    private void stepTwoOfExercise3(String baseURL) throws Exception {
+        final var responseGetAll = HttpClient.get(baseURL, ToDoResponseDTO[].class);
+        System.out.println("Parte 2 - Listagem de itens: ");
+        printToDoResponse(responseGetAll.getBody());
+    }
+
+    private void printToDoResponse(ToDoResponseDTO[] responses) {
+        for (ToDoResponseDTO response : responses) {
+            printToDoResponse(response);
+        }
+    }
+
+    private void printToDoResponse(ToDoResponseDTO response) {
+        System.out.printf(
+                "ID: %s, Título: %s, Descrição: %s, Concluído: %s, Data de Criação: %s\n",
+                response.id(),
+                response.titulo(),
+                response.descricao(),
+                response.concluido(),
+                response.dataCriacao()
+        );
     }
 }
