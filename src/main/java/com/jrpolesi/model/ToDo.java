@@ -1,7 +1,6 @@
 package com.jrpolesi.model;
 
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.UUID;
 

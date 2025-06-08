@@ -10,9 +10,17 @@ import java.util.UUID;
 public class InMemoryToDoRepository implements IToDoRepository {
     private final List<ToDo> toDoList = new ArrayList<>();
 
+    public InMemoryToDoRepository() {
+    }
+
+    public InMemoryToDoRepository(List<ToDo> initialToDos) {
+        this.toDoList.addAll(initialToDos);
+    }
+
     @Override
-    public void save(ToDo toDo) {
+    public ToDo save(ToDo toDo) {
         toDoList.add(toDo);
+        return toDo;
     }
 
     @Override
