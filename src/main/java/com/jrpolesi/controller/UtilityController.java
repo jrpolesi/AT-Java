@@ -17,6 +17,7 @@ public class UtilityController implements IController {
     @Override
     public void initRoutes() {
         app.get("/hello", this::helloWorld);
+        app.get("/saudacao/{nome}", this::greeting);
         app.get("/status", this::getStatus);
 
         app.post("/echo", this::echo);
@@ -47,5 +48,12 @@ public class UtilityController implements IController {
         }
 
         ctx.json(body);
+    }
+
+    private void greeting(Context ctx) {
+        final var nome = ctx.pathParam("nome");
+        final var message = String.format("Olá, %s!", nome);
+
+        ctx.json(Map.of("mensagem", message));
     }
 }
