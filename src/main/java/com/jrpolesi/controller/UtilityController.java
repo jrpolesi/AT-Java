@@ -2,6 +2,7 @@ package com.jrpolesi.controller;
 
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,7 +42,7 @@ public class UtilityController implements IController {
         final var message = body.get("mensagem");
 
         if (message == null) {
-            ctx.status(400).json(
+            ctx.status(HttpStatus.BAD_REQUEST).json(
                     Map.of("erro", "A propriedade 'mensagem' é obrigatória.")
             );
             return;
