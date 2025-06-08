@@ -25,7 +25,7 @@ public class UtilityController implements IController {
     }
 
     private void helloWorld(Context ctx) {
-        ctx.contentType("text/plain; charset=UTF-8");
+        ctx.contentType("text/plain;charset=utf-8");
         ctx.result("Hello, Javalin!");
     }
 
