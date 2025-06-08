@@ -88,7 +88,6 @@ public class HttpClient {
                     null
             );
         } else {
-            System.out.println("Response Body: " + response.toString());
             final var body = gson.fromJson(response.toString(), responseBodyOf);
             return new APIResponse<T>(
                     statusCode,
@@ -136,8 +135,6 @@ public class HttpClient {
         }
 
         final var bodyJson = gson.toJson(body);
-
-        System.out.println("Request Body: " + bodyJson);
 
         final var outputStream = new DataOutputStream(connection.getOutputStream());
         final var bodyBytes = bodyJson.getBytes(StandardCharsets.UTF_8);

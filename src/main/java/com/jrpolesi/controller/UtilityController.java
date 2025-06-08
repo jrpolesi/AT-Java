@@ -65,16 +65,24 @@ public class UtilityController implements IController {
 
     private void exercicio3(Context ctx) {
         System.out.println("Executando o exercício 3...\n");
-        final var baseURL = String.format("http://localhost:%d/todo", ProjectJavalinConfig.PORT);
+        final var baseURL = String.format("http://localhost:%d", ProjectJavalinConfig.PORT);
 
 
         try {
             // Parte 1 do exercício 3
-            final var createdId = stepOneOfExercise3(baseURL);
+            final var createdToDoId = stepOneOfExercise3(baseURL);
             System.out.println("\n");
 
             // Parte 2 do exercício 3
             stepTwoOfExercise3(baseURL);
+            System.out.println("\n");
+
+            // Parte 3 do exercício 3
+            stepThreeOfExercise3(baseURL, createdToDoId);
+            System.out.println("\n");
+
+            // Parte 4 do exercício 3
+            stepFourOfExercise3(baseURL);
             System.out.println("\n");
 
             ctx.json(Map.of(
@@ -88,10 +96,12 @@ public class UtilityController implements IController {
     }
 
     private String stepOneOfExercise3(String baseURL) throws Exception {
-        var todoRequest = new ToDoRequestDTO("Teste", "Teste para o exercício 3", true);
+        final var todoRequest = new ToDoRequestDTO("Teste", "Teste para o exercício 3", true);
 
-        final var response = HttpClient.post(baseURL, todoRequest, ToDoResponseDTO.class);
+        final var endpoint = "/todo";
+        final var response = HttpClient.post(baseURL + endpoint, todoRequest, ToDoResponseDTO.class);
         final var body = response.getBody();
+
         System.out.println("Parte 1 - Item criado: ");
         printToDoResponse(body);
 
@@ -99,9 +109,28 @@ public class UtilityController implements IController {
     }
 
     private void stepTwoOfExercise3(String baseURL) throws Exception {
-        final var responseGetAll = HttpClient.get(baseURL, ToDoResponseDTO[].class);
+        final var endpoint = "/todo";
+        final var response = HttpClient.get(baseURL + endpoint, ToDoResponseDTO[].class);
+
         System.out.println("Parte 2 - Listagem de itens: ");
-        printToDoResponse(responseGetAll.getBody());
+        printToDoResponse(response.getBody());
+    }
+
+    private void stepThreeOfExercise3(String baseURL, String toDoId) throws Exception {
+        final var endpoint = "/todo/";
+        final var url = baseURL + endpoint + toDoId;
+        final var response = HttpClient.get(url, ToDoResponseDTO.class);
+
+        System.out.println("Parte 3 - Buscar item por ID: ");
+        printToDoResponse(response.getBody());
+    }
+
+    private void stepFourOfExercise3(String baseURL) throws Exception {
+        final var endpoint = "/status";
+        final var response = HttpClient.get(baseURL + endpoint, Map.class);
+
+        System.out.println("Parte 4 - Exibir status: ");
+        System.out.println("Status da API: " + response.getBody());
     }
 
     private void printToDoResponse(ToDoResponseDTO[] responses) {
