@@ -1,5 +1,6 @@
 package com.jrpolesi.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jrpolesi.dto.ToDoResponseDTO;
 import com.jrpolesi.repository.InMemoryToDoRepository;
@@ -9,8 +10,9 @@ import io.javalin.testtools.JavalinTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ToDoControllerTest {
     private static final String CONTENT_TYPE = "application/json";
@@ -76,6 +78,43 @@ class ToDoControllerTest {
             assertEquals(200, getResponse.code());
             assertEquals(CONTENT_TYPE, getResponse.header("Content-Type"));
             assertToDoEquals(createdToDo, responseBody);
+        });
+    }
+
+    @Test
+    void givenExistingToDo_whenCallsGETAllToDos_thenShouldReturnList() {
+        JavalinTest.test(app, (server, client) -> {
+            // given
+            var todoRequest = """
+                    {
+                        "titulo": "%s",
+                        "descricao": "%s",
+                        "concluido": %b
+                    }
+                    """.formatted(DEFAULT_TITULO, DEFAULT_DESCRICAO, DEFAULT_CONCLUIDO);
+
+            var createResponse = client.post("/todo", todoRequest);
+            var createdToDo = objectMapper.readValue(createResponse.body().string(), ToDoResponseDTO.class);
+
+            // when
+            var getResponse = client.get("/todo");
+            var responseBody = objectMapper.readValue(
+                    getResponse.body().string(),
+                    new TypeReference<List<ToDoResponseDTO>>() {
+                    }
+            );
+
+            // then
+            assertEquals(200, getResponse.code());
+            assertEquals(CONTENT_TYPE, getResponse.header("Content-Type"));
+            assertFalse(responseBody.isEmpty());
+
+            final var foundToDo = responseBody.
+                    stream().
+                    filter(todo -> todo.id().equals(createdToDo.id())).
+                    findFirst().
+                    orElseThrow();
+            assertToDoEquals(createdToDo, foundToDo);
         });
     }
 
